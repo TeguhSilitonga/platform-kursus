@@ -1,0 +1,9 @@
+export const input = 'w-full rounded-lg border border-line bg-white px-3.5 py-2.5 text-sm transition placeholder:text-slate-400 focus:border-teal focus:outline-none focus:ring-4 focus:ring-teal/15';
+export const label = 'mb-1.5 block text-sm font-semibold text-ink';
+export const btn = 'inline-flex items-center justify-center gap-2 rounded-lg bg-teal px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:bg-teal-dark hover:shadow-md active:translate-y-0 disabled:opacity-60';
+export const btnGhost = 'inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink transition hover:-translate-y-px hover:border-slate-300 hover:bg-mist';
+export const btnDanger = 'inline-flex items-center justify-center rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50';
+export const card = 'rounded-xl border border-line bg-white shadow-soft';
+export const th = 'px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500';
+export const td = 'px-4 py-3.5 text-sm';
+export const badge = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold';
