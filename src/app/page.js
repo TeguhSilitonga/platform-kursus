@@ -36,10 +36,8 @@ export default async function Home({ searchParams }) {
         <div className="absolute -bottom-32 right-0 -z-10 h-96 w-96 rounded-full bg-amber/25 blur-3xl" />
         <div className="grid items-center gap-12 px-6 py-12 sm:px-12 sm:py-16 lg:grid-cols-[1.1fr_.9fr]">
           <div className="animate-fade-up">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200">
-              <span className="h-2 w-2 rounded-full bg-amber" /> Platform kursus daring · {stats.courses} course tersedia
-            </span>
-            <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
+           
+            <h1 className="font-display text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
               Naikkan skill, <span className="text-amber underline decoration-amber/40 decoration-4 underline-offset-8">satu materi</span> setiap hari.
             </h1>
             <p className="mt-5 max-w-xl text-base text-slate-300 sm:text-lg">Ikuti course dari pengajar terverifikasi, tandai materi yang selesai, dan diskusi langsung di bawah setiap materi.</p>
