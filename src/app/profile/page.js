@@ -44,11 +44,11 @@ export default async function ProfilePage() {
       {user.is_new_teacher && <WelcomeAlert />}
 
       <section className={`${card} overflow-hidden`}>
-        <div className="relative h-28 bg-gradient-to-br from-ink to-teal pattern-dots sm:h-36" />
+        <div className="relative h-24 bg-gradient-to-br from-ink to-teal pattern-dots sm:h-32" />
         <div className="px-6 pb-6">
-          <div className="relative z-10 -mt-14 flex flex-wrap items-end gap-5">
+          <div className="relative z-10 -mt-12 flex flex-wrap items-start gap-5">
             <Avatar id={user.id} name={user.username} v={user.avatar_v} size="lg" className="ring-4 ring-white" />
-            <div className="pb-1">
+            <div className="sm:mt-14">
               <h1 className="font-display text-3xl font-extrabold text-ink">{user.username}</h1>
               <p className="text-sm text-slate-600"><span className="capitalize">{user.role}</span> · {user.email}</p>
             </div>
