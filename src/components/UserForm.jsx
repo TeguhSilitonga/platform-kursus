@@ -12,7 +12,7 @@ export default function UserForm({ user }) {
       <div>
         <label htmlFor="role" className={label}>Role</label>
         <select id="role" name="role" required defaultValue={user?.role ?? 'student'} className={input}>
-          <option value="student">Student</option><option value="teacher">Teacher</option><option value="admin">Admin</option>
+          <option value="student">Student</option><option value="teacher">Teacher</option>
         </select>
       </div>
       <SubmitButton>Simpan pengguna</SubmitButton>
