@@ -8,13 +8,13 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function register(prev, formData) {
   const as = formData.get('as') === 'teacher' ? 'teacher' : 'student';
-  const username = String(formData.get('username') ?? '').trim();
+  const username = String(formData.get('username') ?? '').trim().replace(/\s+/g, ' ');
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
   const password = String(formData.get('password') ?? '');
   const confirm = String(formData.get('confirm') ?? '');
 
   if (username.length < 3 || username.length > 30) return { error: 'Username harus 3–30 karakter.' };
-  if (!/^[a-zA-Z0-9_.]+$/.test(username)) return { error: 'Username hanya boleh huruf, angka, titik, dan underscore.' };
+  if (!/^[a-zA-Z0-9_. ]+$/.test(username)) return { error: 'Username hanya boleh huruf, angka, spasi, titik, dan underscore.' };
   if (!EMAIL_RE.test(email)) return { error: 'Format email tidak valid.' };
   if (password.length < 8) return { error: 'Password minimal 8 karakter.' };
   if (password !== confirm) return { error: 'Konfirmasi password tidak cocok.' };
