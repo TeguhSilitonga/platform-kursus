@@ -11,12 +11,12 @@ const ROLES = ['admin', 'teacher', 'student'];
 export async function saveUser(prev, formData) {
   const admin = await requireUser(['admin']);
   const id = toInt(formData.get('id'));
-  const username = String(formData.get('username') ?? '').trim();
+   const username = String(formData.get('username') ?? '').trim().replace(/\s+/g, ' ');
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
   const password = String(formData.get('password') ?? '');
   const role = String(formData.get('role') ?? '');
 
-  if (username.length < 3 || username.length > 30 || !/^[a-zA-Z0-9_.]+$/.test(username)) return { error: 'Username 3–30 karakter (huruf, angka, . atau _).' };
+  if (username.length < 3 || !/^[a-zA-Z0-9_. ]+$/.test(username)) return { error: 'Username 3–30 karakter (huruf, angka, spasi, . atau _).' };
   if (!EMAIL_RE.test(email)) return { error: 'Format email tidak valid.' };
   if (!ROLES.includes(role)) return { error: 'Role tidak valid.' };
   if (!id && password.length < 8) return { error: 'Password minimal 8 karakter.' };
@@ -26,13 +26,13 @@ export async function saveUser(prev, formData) {
   const dup = await query('SELECT 1 FROM users WHERE (email = $1 OR LOWER(username) = LOWER($2)) AND id IS DISTINCT FROM $3::int', [email, username, id]);
   if (dup.rows.length) return { error: 'Username atau email sudah dipakai.' };
 
-  const status = role === 'teacher' ? 'approved' : 'none';
+    const status = role === 'teacher' ? 'approved' : 'none';
   if (id) {
     const hash = password ? await bcrypt.hash(password, 10) : null;
     await query(
-      `UPDATE users SET username=$1, email=$2, role=$3,
-              teacher_status = CASE WHEN $3 = 'teacher' THEN 'approved' WHEN $3 <> role OR teacher_status = 'approved' THEN 'none' ELSE teacher_status END,
-              approved_at = CASE WHEN $3 = 'teacher' AND role <> 'teacher' THEN NOW() ELSE approved_at END,
+      `UPDATE users SET username=$1, email=$2, role=$3::text,
+              teacher_status = CASE WHEN $3::text = 'teacher' THEN 'approved' WHEN $3::text <> role OR teacher_status = 'approved' THEN 'none' ELSE teacher_status END,
+              approved_at = CASE WHEN $3::text = 'teacher' AND role <> 'teacher' THEN NOW() ELSE approved_at END,
               password = COALESCE($4, password)
         WHERE id=$5`,
       [username, email, role, hash, id]
@@ -41,8 +41,8 @@ export async function saveUser(prev, formData) {
     const hash = await bcrypt.hash(password, 10);
     await query(
       `INSERT INTO users (username, email, password, role, teacher_status, approved_at)
-       VALUES ($1,$2,$3,$4,$5, CASE WHEN $4 = 'teacher' THEN NOW() END)`,
-      [username, email, hash, role, status]
+       VALUES ($1,$2,$3,$4,$5,$6)`,
+      [username, email, hash, role, status, role === 'teacher' ? new Date() : null]
     );
   }
   redirect('/admin/users');
