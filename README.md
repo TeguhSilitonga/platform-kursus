@@ -26,31 +26,10 @@ Akun awal (password semua: `password123`): `admin@kursus.test`, `guru@kursus.tes
 - Tampil di navbar, kartu course (pengajar), detail course (pengajar + siswa yang bergabung, hanya untuk user login), komentar diskusi, daftar user admin, dan bagian "Pengajar kami" di beranda.
 - Database lama: jalankan `database/migration_avatar.sql` (tanpa menghapus data). Database baru: cukup `schema.sql`.
 
-## Fitur keamanan (saran dosen)
+## Fitur keamanan
 - **bcryptjs**: `bcrypt.hash` saat register / buat user admin, `bcrypt.compare` saat login (`src/lib/actions/auth.js`). Password tidak pernah disimpan plaintext.
 - **`src/middleware.js`**: membaca cookie `session` (JWT httpOnly), memverifikasi dengan `jose` (Edge-compatible), **tanpa koneksi pg**. Melindungi `/profile`, `/learn`, `/manage`, `/admin`; `/admin` khusus role admin; user yang sudah login diarahkan keluar dari `/login` & `/register`.
 - Pengecekan role kedua dilakukan di layout server (`requireUser`) memakai data terbaru dari DB — penting karena role guru berubah setelah di-approve, sedangkan token lama masih berisi role lama.
 - Semua query memakai parameter (`$1, $2…`) → aman dari SQL injection. Sort memakai whitelist.
 - Validasi dilakukan di server (server actions), bukan hanya atribut HTML.
 
-## Pemetaan ke soal
-| Soal | Lokasi |
-|---|---|
-| Register Student/Teacher, Teacher = student + pending | `register/page.js`, `actions/auth.js` |
-| Approve Teacher → role `teacher` + `approved_at` | `actions/admin.js` (`approveTeacher`), `/admin`, `/admin/users` |
-| Welcome Teacher < 24 jam (`approved_at`, Server Component) | `profile/page.js` + `getUser()` (`is_new_teacher`) |
-| Kategori CRUD (admin) → dropdown course | `admin/categories`, `components/CourseForm.jsx` |
-| Course CRUD (admin & teacher, tanggal nullable) | `manage/courses`, `actions/manage.js` |
-| Konten CRUD (`course_id`, `order_index` unik) | `manage/courses/[id]/contents` |
-| Home: 5 terpopuler, search, filter kategori | `app/page.js` |
-| Katalog + kartu pintar (Ikuti Course / progress + Lanjutkan belajar) + Hubungi Teacher | `courses/page.js`, `components/CourseCard.jsx` |
-| Halaman belajar: Mark as Done, Lanjutkan, forum diskusi | `learn/[courseId]/page.js` |
-| Profil student/teacher + progress | `profile/page.js` |
-| Users: pagination + pending teacher | `admin/users/page.js` |
-
-## Bahan presentasi (tanya jawab)
-- **Kenapa middleware tidak boleh pakai pg?** Berjalan di Edge runtime (tanpa modul Node/TCP), jadi hanya verifikasi token.
-- **Kenapa cookie httpOnly, bukan localStorage?** Tidak bisa dibaca JavaScript (aman dari XSS) dan terkirim otomatis ke server/middleware.
-- **Cookie `secure`**: aktifkan `COOKIE_SECURE=true` hanya saat deploy HTTPS.
-- **Progress** = jumlah baris `content_progress` untuk enrollment ÷ jumlah materi.
-- Opsional belum dikerjakan: Rich Text Editor dan Certificate.
