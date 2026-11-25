@@ -45,7 +45,22 @@ export async function addComment(prev, formData) {
   if (!access.ok) return { error: 'Anda tidak punya akses ke course ini.' };
   const ok = await query('SELECT 1 FROM contents WHERE id = $1 AND course_id = $2', [contentId, courseId]);
   if (!ok.rows.length) return { error: 'Materi tidak ditemukan.' };
+    // Anti-spam 1: komentar yang sama persis dalam 10 menit terakhir ditolak
+  const dup = await query(
+    `SELECT 1 FROM comments
+      WHERE user_id = $1 AND content_id = $2 AND body = $3 AND created_at > NOW() - INTERVAL '10 minutes'`,
+    [user.id, contentId, body]
+  );
+  if (dup.rows.length) return { error: 'Komentar yang sama sudah Anda kirim.' };
+
+  // Anti-spam 2: maksimal 5 komentar per menit untuk setiap pengguna
+  const recent = await query(
+    `SELECT COUNT(*)::int AS n FROM comments WHERE user_id = $1 AND created_at > NOW() - INTERVAL '1 minute'`,
+    [user.id]
+  );
+  if (recent.rows[0].n >= 5) return { error: 'Terlalu banyak komentar dalam waktu singkat. Coba lagi sebentar lagi.' };
+
   await query('INSERT INTO comments (content_id, user_id, body) VALUES ($1, $2, $3)', [contentId, user.id, body]);
   revalidatePath(`/learn/${courseId}`);
-  return { ok: Date.now() };
+  return { ok: Date.now(), message: 'Komentar terkirim.' };
 }
